@@ -66,6 +66,11 @@ tests at production by default.
 ## Guardrails
 
 - Localhost: allowed. Staging: allowed. Production: restricted.
+- CORS: when the frontend and API are separate dev origins, the backend must
+  allow the exact origins the browser loads — typically both `localhost` and
+  `127.0.0.1` on the dev port — and permit credentials when auth uses cookies.
+  Verify with an `Origin`-carrying request before testing; otherwise the
+  browser blocks requests and tests fail on CORS, not app logic.
 - MCP is a **tool**, not part of the architecture. Business logic MUST NOT depend on MCP.
 - Treat MCP servers with least privilege (see `standards/mcp.md`).
 - Never skip a test to make CI pass. Report failures honestly.

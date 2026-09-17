@@ -74,7 +74,15 @@ The user declines only if they choose to — the agent never omits the offer.
 2. Wait for readiness: poll the URL or health endpoint until it responds on
    the expected port. Note the URL and port.
 
-3. Run blackbox tests against the dev server (workflow in
+3. Check CORS before running blackbox tests. When the frontend and API run on
+   separate origins (for example Vite on `:5173` calling a Gin API), confirm
+   the backend allows the exact origins the browser uses — commonly both
+   `http://localhost:5173` and `http://127.0.0.1:5173` — and that credentialed
+   requests (`Access-Control-Allow-Credentials`) are permitted when the app
+   uses auth cookies. A missing origin fails in the browser as a CORS error,
+   not an API error, and blackbox tests report it as a red herring.
+
+4. Run blackbox tests against the dev server (workflow in
    `quality/browser-testing.md`):
 
    ```text
@@ -89,7 +97,7 @@ The user declines only if they choose to — the agent never omits the offer.
    Capture evidence if necessary
    ```
 
-4. After testing, stop the dev server and report the restart command, or leave
+5. After testing, stop the dev server and report the restart command, or leave
    it running for review — say which. Never abandon background processes
    silently.
 
