@@ -138,9 +138,16 @@ Per-agent invocation:
 
 - Claude, Cursor, Windsurf, opencode, Gemini: type `/test` directly.
 - Gemini namespaces subfolders: `commands/git/commit.toml` → `/git:commit`.
-- Codex: on builds that still support custom prompts it is `/prompts:test`;
-  newer Codex builds removed custom prompts — there, type the command in
-  plain language (e.g. `run /test`). The modules still auto-load through
+- Codex: custom prompts were removed upstream, so Codex does not accept
+  `/test` (that is expected). Use the installed **skills** instead — every
+  lifecycle gate is also a Codex skill:
+
+  - Type `$test`, `$develop`, `$sync`, ... to invoke one explicitly, or
+  - Type `/skills` and pick one from the menu.
+
+  The skills live in `~/.codex/skills/<name>/SKILL.md` along with an
+  `agents/openai.yaml` (manual invocation only — the harness gates are
+  human-triggered by design). The modules also still auto-load through
   `AGENTS.md` regardless.
 - Each agent also keeps its own built-in `/` commands (`/help`, `/agents`,
   `/compact`, ...) alongside these.

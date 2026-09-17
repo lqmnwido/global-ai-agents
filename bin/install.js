@@ -143,6 +143,28 @@ function writeSlashCommands(agent) {
   return { cmdDir, written };
 }
 
+function writeCodexSkills(agent) {
+  if (agent.id !== 'codex') return 0;
+
+  let written = 0;
+  for (const name of index.COMMAND_IDS) {
+    const skill = index.buildCodexSkill(agent, name);
+
+    if (fs.existsSync(skill.skillPath) && !index.isManagedRouter(fs.readFileSync(skill.skillPath, 'utf8'))) {
+      log('→', `Skipped existing $${name} skill (created outside this package)`);
+      continue;
+    }
+
+    fs.mkdirSync(path.dirname(skill.skillPath), { recursive: true });
+    fs.mkdirSync(path.dirname(skill.policyPath), { recursive: true });
+    fs.writeFileSync(skill.skillPath, skill.skill, 'utf8');
+    fs.writeFileSync(skill.policyPath, skill.policy, 'utf8');
+    written++;
+  }
+
+  return written;
+}
+
 function writeRouter(agent) {
   const routerPath = path.join(agent.baseDir(), agent.routerFile);
   const body = index.buildRouter(agent);
@@ -212,10 +234,12 @@ async function main() {
       const agentModules = installModuleFiles(agent);
       const routerPath = writeRouter(agent);
       const slash = writeSlashCommands(agent);
+      const skills = writeCodexSkills(agent);
 
       log('✓', `${agentModules} module files → ${path.join(agent.baseDir(), agent.moduleDir)}`);
       log('✓', `router → ${routerPath}`);
       log('✓', `${slash.written} slash commands → ${slash.cmdDir}`);
+      if (skills) log('✓', `${skills} Codex skills → ${index.codexSkillDir()}`);
 
       totalModules += agentModules;
       console.log('');

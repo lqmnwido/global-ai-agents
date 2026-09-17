@@ -55,6 +55,24 @@ function main() {
         } catch (err) {
           log('→', `Could not remove empty command dir: ${err.message}`);
         }
+
+      if (agent.id === 'codex') {
+        const skillRoot = index.codexSkillDir();
+        let removedSkills = 0;
+        for (const name of index.COMMAND_IDS) {
+          const dir = path.join(skillRoot, name);
+          if (!fs.existsSync(dir)) continue;
+          const skill = path.join(dir, 'SKILL.md');
+          if (fs.existsSync(skill) && index.isManagedRouter(fs.readFileSync(skill, 'utf8'))) {
+            fs.rmSync(dir, { recursive: true, force: true });
+            removedSkills++;
+          }
+        }
+        if (removedSkills) {
+          log('✓', `Removed ${removedSkills} Codex skills from ${skillRoot}`);
+          removed++;
+        }
+      }
       }
 
       if (fs.existsSync(routerPath)) {
