@@ -9,8 +9,9 @@ No implementation should begin before scope is understood.
 ## Human Gate
 
 Before starting, confirm the scoping approach with the user: what to inspect and
-why. Present the scope as options (economy / recommended / full) and wait. Do not
-proceed to /audit until the scope is approved.
+why. Present the scope as a numbered menu (economy / recommended / full, per
+`standards/human-review.md` → Decision Format) and wait for a single-digit
+reply. Do not proceed to /audit until the scope is approved.
 
 ## Responsibilities
 

@@ -43,6 +43,24 @@ Full         → everything possible
 
 Present them and wait for a decision.
 
+## Decision Format
+
+Present every options block as a numbered menu the user can answer with a
+single keystroke. Never ask an open-ended text question where a choice exists.
+
+```text
+Options:
+1  Economy       → minimal implementation
+2  Recommended   → approved defaults / my recommendation
+3  Full          → everything possible
+
+Reply with 1, 2, or 3.
+```
+
+Number first, description second, recommendation marked. End with the exact
+"Reply with" phrasing so the reply is one digit. If more than nine options
+exist, group them and use a two-stage menu.
+
 ## Lifecycle Command Gates
 
 Every command must pass its human gate:
