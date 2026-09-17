@@ -44,6 +44,22 @@ browser_wait
 8. Stop the dev server (or leave it running explicitly — say which)
 ```
 
+## Required Coverage: Positive / Negative / Bug-Error
+
+Test each user journey in all three categories, never only the happy path:
+
+```text
+Positive  → the flow succeeds with valid input
+Negative  → the flow is rejected with the expected feedback (validation,
+            wrong credentials, unauthorized, forbidden)
+Bug/Error → the flow degrades correctly when something goes wrong (404/500,
+            backend unavailable, empty results, malformed data), and the
+            browser console/network show no unexpected errors
+```
+
+If a category does not apply to a journey, record why in the test report
+instead of skipping it silently.
+
 ## Start the Development Server First
 
 Blackbox tests run against a running app. Start it in development mode before

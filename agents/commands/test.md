@@ -97,6 +97,20 @@ The user declines only if they choose to — the agent never omits the offer.
    Capture evidence if necessary
    ```
 
+   Run every main journey across all three categories, not just the happy
+   path:
+
+   ```text
+   Positive  → expected success (valid input, correct flow)
+   Negative  → expected rejection (bad input, missing fields, wrong
+               credentials, unauthorized access)
+   Bug/Error → expected error handling (404/500 responses, backend down,
+               empty data, malformed data, browser console errors)
+   ```
+
+   If a category does not apply to a journey, say why in the test report
+   instead of skipping it silently.
+
 5. After testing, stop the dev server and report the restart command, or leave
    it running for review — say which. Never abandon background processes
    silently.
