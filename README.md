@@ -118,6 +118,33 @@ gate. Files this package owns carry an `@lqmnwido/global-ai-agents` marker;
 pre-existing commands with the same name are never overwritten, and
 `ai-agents-uninstall` removes only the marked ones.
 
+### Available `/` Commands
+
+The harness registers the lifecycle as slash commands in every agent:
+
+| Command      | What it does |
+|--------------|--------------|
+| `/scope`     | Understand exactly what needs to change; approve the approach before work starts |
+| `/audit`     | Inspect the codebase and report findings before designing anything |
+| `/architect` | Present design options (economy / recommended / full) and approve one before any code |
+| `/develop`   | Implement only the approved plan, in approved stages |
+| `/check`     | Run the project's lint / type / format checks (`npm run lint`, `npm run typecheck`, ...) |
+| `/test`      | Run the test plan, including development blackbox tests (positive / negative / bug-error) |
+| `/debug`     | Reproduce the issue, hypothesize, and fix step by step — each step approved |
+| `/document`  | Update documentation for the change, at the approved scope |
+| `/sync`      | Anti-slop scan, stage, commit and push with an approved message |
+
+Per-agent invocation:
+
+- Claude, Cursor, Windsurf, opencode, Gemini: type `/test` directly.
+- Gemini namespaces subfolders: `commands/git/commit.toml` → `/git:commit`.
+- Codex: on builds that still support custom prompts it is `/prompts:test`;
+  newer Codex builds removed custom prompts — there, type the command in
+  plain language (e.g. `run /test`). The modules still auto-load through
+  `AGENTS.md` regardless.
+- Each agent also keeps its own built-in `/` commands (`/help`, `/agents`,
+  `/compact`, ...) alongside these.
+
 ## Human Review First
 
 The harness runs under **human supervision**. No action — including read-only
