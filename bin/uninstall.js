@@ -23,6 +23,7 @@ function main() {
     for (const agent of agents) {
       const agentsDir = path.join(agent.baseDir(), agent.moduleDir);
       const routerPath = path.join(agent.baseDir(), agent.routerFile);
+      const cmdDir = index.commandDirFor(agent);
 
       console.log(`  ${agent.name} (${agent.id})`);
 
@@ -32,6 +33,28 @@ function main() {
         removed++;
       } else {
         log('–', 'no module directory found');
+      }
+
+      if (fs.existsSync(cmdDir)) {
+        let removedCommands = 0;
+        for (const name of index.COMMAND_IDS) {
+          for (const ext of ['md', 'toml']) {
+            const cmd = path.join(cmdDir, `${name}.${ext}`);
+            if (fs.existsSync(cmd) && index.isManagedRouter(fs.readFileSync(cmd, 'utf8'))) {
+              fs.rmSync(cmd, { force: true });
+              removedCommands++;
+            }
+          }
+        }
+        if (removedCommands) {
+          log('✓', `Removed ${removedCommands} slash commands from ${cmdDir}`);
+          removed++;
+        }
+        try {
+          if (fs.existsSync(cmdDir) && fs.readdirSync(cmdDir).length === 0) fs.rmdirSync(cmdDir);
+        } catch (err) {
+          log('→', `Could not remove empty command dir: ${err.message}`);
+        }
       }
 
       if (fs.existsSync(routerPath)) {

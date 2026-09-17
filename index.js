@@ -167,11 +167,54 @@ function buildRouter(agent) {
     .replace(/{{MOD}}/g, agent.ref(''));
 }
 
+const COMMAND_IDS = ['scope', 'audit', 'architect', 'develop', 'check', 'test', 'debug', 'document', 'sync'];
+
+function commandDirFor(agent) {
+  const override = process.env.GLOBAL_AGENTS_HOME;
+  if (agent.id === 'windsurf') {
+    const base = override ? path.join(override, 'windsurf') : path.join(os.homedir(), '.codeium', 'windsurf');
+    return path.join(base, 'global_workflows');
+  }
+  const dirs = { codex: 'prompts', claude: 'commands', cursor: 'commands', opencode: 'command', gemini: 'commands' };
+  return path.join(agent.baseDir(), dirs[agent.id] || 'commands');
+}
+
+function buildCommandFile(agent, name) {
+  const moduleRef = agent.ref(`commands/${name}.md`);
+  const hrRef = agent.ref('standards/human-review.md');
+  const body = [
+    `# /${name}`,
+    '',
+    `Run the lqmnwido harness lifecycle gate \`/${name}\`.`,
+    '',
+    `1. Read \`${moduleRef}\` and any modules it references, then execute exactly per that module.`,
+    '2. Honor its Human Gate: state intent, present options, and wait for approval before any action, including reads.',
+    `3. Follow the Decision Format in \`${hrRef}\`: numbered menus ending with the line "Reply with 1, 2, or 3".`,
+    '4. Report concisely what you ran and the results, then stop and await the next instruction.',
+  ].join('\n');
+
+  if (agent.id === 'gemini') {
+    return {
+      ext: 'toml',
+      content: `# @lqmnwido/global-ai-agents\n\ndescription = \"Run the lqmnwido harness lifecycle gate: ${name}.\"\n\nprompt = \"\"\"\n${body}\n\"\"\"\n`,
+    };
+  }
+
+  const frontmatter = agent.id === 'cursor' ? '' : `---\ndescription: ${name} — lqmnwido harness lifecycle gate\n---\n\n`;
+  return {
+    ext: 'md',
+    content: `${frontmatter}<!-- @lqmnwido/global-ai-agents -->\n\n${body}\n`,
+  };
+}
+
 module.exports = {
   MARKER,
   isManagedRouter,
   AGENTS,
   AGENT_IDS,
+  COMMAND_IDS,
+  commandDirFor,
+  buildCommandFile,
   resolveTargetIds,
   getConfiguredAgents,
   getAgentFiles,

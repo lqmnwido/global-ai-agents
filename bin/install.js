@@ -122,6 +122,27 @@ function generateIndex(agentsDir, agent) {
   fs.writeFileSync(path.join(agentsDir, 'INDEX.md'), content, 'utf8');
 }
 
+function writeSlashCommands(agent) {
+  const cmdDir = index.commandDirFor(agent);
+  fs.mkdirSync(cmdDir, { recursive: true });
+
+  let written = 0;
+  for (const name of index.COMMAND_IDS) {
+    const { ext, content } = index.buildCommandFile(agent, name);
+    const dest = path.join(cmdDir, `${name}.${ext}`);
+
+    if (fs.existsSync(dest) && !index.isManagedRouter(fs.readFileSync(dest, 'utf8'))) {
+      log('→', `Skipped existing /${name} command (created outside this package)`);
+      continue;
+    }
+
+    fs.writeFileSync(dest, content, 'utf8');
+    written++;
+  }
+
+  return { cmdDir, written };
+}
+
 function writeRouter(agent) {
   const routerPath = path.join(agent.baseDir(), agent.routerFile);
   const body = index.buildRouter(agent);
@@ -190,9 +211,11 @@ async function main() {
       console.log(`  ${agent.name} (${agent.id})`);
       const agentModules = installModuleFiles(agent);
       const routerPath = writeRouter(agent);
+      const slash = writeSlashCommands(agent);
 
       log('✓', `${agentModules} module files → ${path.join(agent.baseDir(), agent.moduleDir)}`);
       log('✓', `router → ${routerPath}`);
+      log('✓', `${slash.written} slash commands → ${slash.cmdDir}`);
 
       totalModules += agentModules;
       console.log('');

@@ -101,6 +101,23 @@ GLOBAL_AGENTS_HOME=/tmp/fake-home ai-agents
 └── templates/        # report, ADR + verification templates
 ```
 
+Every agent also gets the lifecycle commands as **native slash commands**,
+written to each tool's own command directory:
+
+```text
+codex     → ~/.codex/prompts/                  (invoked as /prompts:test, ...)
+claude    → ~/.claude/commands/
+cursor    → ~/.cursor/commands/
+windsurf  → ~/.codeium/windsurf/global_workflows/
+opencode  → ~/.config/opencode/command/
+gemini    → ~/.gemini/commands/                (TOML, invoked as /test, ...)
+```
+
+Type `/` in any agent and pick e.g. `/test` — it runs the harness lifecycle
+gate. Files this package owns carry an `@lqmnwido/global-ai-agents` marker;
+pre-existing commands with the same name are never overwritten, and
+`ai-agents-uninstall` removes only the marked ones.
+
 ## Human Review First
 
 The harness runs under **human supervision**. No action — including read-only
