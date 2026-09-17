@@ -1,6 +1,6 @@
-# @lqmnwido/global-ai-agents
+# Global AI Agents
 
-Global AI development harness for **lqmnwido**.
+Global AI Development Harness for **lqmnwido**.
 
 Install via **npm** — one command configures **all major AI coding agents** at once.
 
