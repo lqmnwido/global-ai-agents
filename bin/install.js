@@ -259,7 +259,7 @@ async function main() {
       log('✓', `${agentModules} module files → ${path.join(agent.baseDir(), agent.moduleDir)}`);
       log('✓', `router → ${routerPath}`);
       if (agent.id === 'codex') {
-        log('✓', `${skills} Codex skills → ${index.codexSkillDir()} (invoke via $$test-gag; custom / prompts were removed upstream)`);
+        log('✓', `${skills} Codex skills → ${index.codexSkillDir()} (invoke via $test-gag; custom / prompts were removed upstream)`);
       } else {
         log('✓', `${slash.written} slash commands → ${slash.cmdDir}`);
       }
