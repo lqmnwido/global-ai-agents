@@ -105,16 +105,26 @@ Every agent also gets the lifecycle commands as **native slash commands**,
 written to each tool's own command directory:
 
 ```text
-codex     → ~/.codex/prompts/                  (invoked as /prompts:test, ...)
+codex     → ~/.codex/skills/                    (skills, invoked as $test-gag, ...)
 claude    → ~/.claude/commands/
 cursor    → ~/.cursor/commands/
 windsurf  → ~/.codeium/windsurf/global_workflows/
 opencode  → ~/.config/opencode/command/
-gemini    → ~/.gemini/commands/                (TOML, invoked as /test, ...)
+gemini    → ~/.gemini/commands/                (TOML)
 ```
 
-Type `/` in any agent and pick e.g. `/test` — it runs the harness lifecycle
-gate. Files this package owns carry an `@lqmnwido/global-ai-agents` marker;
+The command name differs per harness — use the native syntax:
+
+| Harness    | Example            | Notes |
+|------------|--------------------|-------|
+| Codex      | `$test-gag`        | Skills. Custom `/` prompts were removed upstream. Or use `/skills` to browse. |
+| Claude Code | `/test`            | Native command directory |
+| Cursor     | `/test`            | Native command directory |
+| Windsurf   | `/test`            | Global workflows (Cascade) |
+| opencode   | `/test`            | Native command directory |
+| Gemini CLI | `/test`            | TOML commands; subfolders namespace as `/git:commit` |
+
+Files this package owns carry an `@lqmnwido/global-ai-agents` marker;
 pre-existing commands with the same name are never overwritten, and
 `ai-agents-uninstall` removes only the marked ones.
 
@@ -138,14 +148,14 @@ Per-agent invocation:
 
 - Claude, Cursor, Windsurf, opencode, Gemini: type `/test` directly.
 - Gemini namespaces subfolders: `commands/git/commit.toml` → `/git:commit`.
-- Codex: custom prompts were removed upstream, so Codex does not accept
-  `/test` (that is expected). Use the installed **skills** instead — every
-  lifecycle gate is also a Codex skill:
+- Codex: custom prompts were removed upstream, so `/test` is not accepted
+  (that is expected). Use the installed **skills** instead — every lifecycle
+  gate ships as a Codex skill named `<command>-gag`:
 
-  - Type `$test`, `$develop`, `$sync`, ... to invoke one explicitly, or
+  - Type `$test-gag`, `$develop-gag`, `$sync-gag`, ... to invoke one, or
   - Type `/skills` and pick one from the menu.
 
-  The skills live in `~/.codex/skills/<name>/SKILL.md` along with an
+  The skills live in `~/.codex/skills/<command>-gag/SKILL.md` with an
   `agents/openai.yaml` (manual invocation only — the harness gates are
   human-triggered by design). The modules also still auto-load through
   `AGENTS.md` regardless.

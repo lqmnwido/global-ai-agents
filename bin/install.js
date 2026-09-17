@@ -122,6 +122,14 @@ function generateIndex(agentsDir, agent) {
   fs.writeFileSync(path.join(agentsDir, 'INDEX.md'), content, 'utf8');
 }
 
+function cleanupOwnedFile(filePath) {
+  if (fs.existsSync(filePath) && index.isManagedRouter(fs.readFileSync(filePath, 'utf8'))) {
+    fs.rmSync(filePath, { force: true });
+    return true;
+  }
+  return false;
+}
+
 function writeSlashCommands(agent) {
   const cmdDir = index.commandDirFor(agent);
   fs.mkdirSync(cmdDir, { recursive: true });
@@ -130,6 +138,11 @@ function writeSlashCommands(agent) {
   for (const name of index.COMMAND_IDS) {
     const { ext, content } = index.buildCommandFile(agent, name);
     const dest = path.join(cmdDir, `${name}.${ext}`);
+
+    if (agent.id === 'codex') {
+      cleanupOwnedFile(dest);
+      continue;
+    }
 
     if (fs.existsSync(dest) && !index.isManagedRouter(fs.readFileSync(dest, 'utf8'))) {
       log('→', `Skipped existing /${name} command (created outside this package)`);
@@ -148,10 +161,17 @@ function writeCodexSkills(agent) {
 
   let written = 0;
   for (const name of index.COMMAND_IDS) {
+    const legacyDir = path.join(index.codexSkillDir(), name);
+    if (fs.existsSync(path.join(legacyDir, 'SKILL.md'))) {
+      if (cleanupOwnedFile(path.join(legacyDir, 'SKILL.md'))) {
+        fs.rmSync(legacyDir, { recursive: true, force: true });
+      }
+    }
+
     const skill = index.buildCodexSkill(agent, name);
 
     if (fs.existsSync(skill.skillPath) && !index.isManagedRouter(fs.readFileSync(skill.skillPath, 'utf8'))) {
-      log('→', `Skipped existing $${name} skill (created outside this package)`);
+      log('→', `Skipped existing $${skill.id} skill (created outside this package)`);
       continue;
     }
 
@@ -238,8 +258,11 @@ async function main() {
 
       log('✓', `${agentModules} module files → ${path.join(agent.baseDir(), agent.moduleDir)}`);
       log('✓', `router → ${routerPath}`);
-      log('✓', `${slash.written} slash commands → ${slash.cmdDir}`);
-      if (skills) log('✓', `${skills} Codex skills → ${index.codexSkillDir()}`);
+      if (agent.id === 'codex') {
+        log('✓', `${skills} Codex skills → ${index.codexSkillDir()} (invoke via $$test-gag; custom / prompts were removed upstream)`);
+      } else {
+        log('✓', `${slash.written} slash commands → ${slash.cmdDir}`);
+      }
 
       totalModules += agentModules;
       console.log('');

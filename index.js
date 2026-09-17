@@ -214,6 +214,7 @@ function codexSkillDir() {
 }
 
 function buildCodexSkill(agent, name) {
+  const skillName = `${name}-gag`;
   const moduleRef = agent.ref(`commands/${name}.md`);
   const hrRef = agent.ref('standards/human-review.md');
   const body = [
@@ -228,11 +229,11 @@ function buildCodexSkill(agent, name) {
   ].join('\n');
 
   return {
-    skillPath: path.join(codexSkillDir(), name, 'SKILL.md'),
-    policyPath: path.join(codexSkillDir(), name, 'agents', 'openai.yaml'),
+    skillPath: path.join(codexSkillDir(), skillName, 'SKILL.md'),
+    policyPath: path.join(codexSkillDir(), skillName, 'agents', 'openai.yaml'),
     skill: `---
-name: ${name}
-description: Run the lqmnwido harness lifecycle gate /${name}. Invoked explicitly via $${name} or /skills when the user asks for /${name} (scope, audit, architect, develop, check, test, debug, document, sync).
+name: ${skillName}
+description: Run the lqmnwido harness lifecycle gate /${name}. Invoked explicitly via $${skillName} or /skills when the user asks for /${name} or $${skillName} (scope, audit, architect, develop, check, test, debug, document, sync).
 ---
 
 <!-- @lqmnwido/global-ai-agents -->
@@ -240,11 +241,12 @@ description: Run the lqmnwido harness lifecycle gate /${name}. Invoked explicitl
 ${body}
 `,
     policy: `interface:
-  display_name: "/${name} — lqmnwido harness lifecycle gate"
+  display_name: "$${skillName} — lqmnwido harness lifecycle gate"
 
 policy:
   allow_implicit_invocation: false
 `,
+    id: skillName,
   };
 }
 
