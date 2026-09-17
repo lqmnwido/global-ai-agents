@@ -1,0 +1,4 @@
+# Rules themselves contain the forbidden patterns — exclude definition files.
+bin/anti-slop.js
+agents/standards/anti-slop.md
+node_modules

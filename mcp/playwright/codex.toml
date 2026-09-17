@@ -1,0 +1,5 @@
+# Append to ~/.codex/config.toml
+
+[mcp_servers.playwright]
+command = "npx"
+args = ["@playwright/mcp@latest"]

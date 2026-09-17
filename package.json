@@ -1,0 +1,55 @@
+{
+  "name": "@lqmnwido/global-ai-agents",
+  "version": "1.4.0",
+  "description": "Global AI development harness for lqmnwido. One npm install, works with Codex, Claude Code, Cursor, Windsurf, opencode, Gemini CLI. Covers Laravel, Spring Boot, Django, Rails, ASP.NET, Go, Rust and 25+ more frameworks.",
+  "main": "index.js",
+  "bin": {
+    "ai-agents": "bin/install.js",
+    "ai-agents-install": "bin/install.js",
+    "ai-agents-uninstall": "bin/uninstall.js",
+    "ai-agents-playwright": "bin/playwright.js",
+    "ai-agents-mcp": "bin/mcp.js",
+    "ai-agents-slop": "bin/anti-slop.js",
+    "ai-agents-check": "bin/check.js"
+  },
+  "scripts": {
+    "postinstall": "node bin/install.js",
+    "preuninstall": "node bin/uninstall.js",
+    "test": "node bin/check.js"
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "development",
+    "harness",
+    "codex",
+    "claude",
+    "cursor",
+    "windsurf",
+    "opencode",
+    "gemini",
+    "laravel",
+    "spring-boot",
+    "django",
+    "rails",
+    "fastapi",
+    "nestjs",
+    "nextjs",
+    "react",
+    "vue",
+    "angular",
+    "lqmnwido"
+  ],
+  "author": "lqmnwido",
+  "license": "MIT",
+  "files": [
+    "agents/",
+    "templates/",
+    "routers/",
+    "bin/",
+    "mcp/",
+    "index.js",
+    "AGENTS.md",
+    "README.md"
+  ]
+}
