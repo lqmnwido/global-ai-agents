@@ -33,6 +33,7 @@ browser_wait
 ## Blackbox Test Workflow
 
 ```text
+0. Start the development server (see below)
 1. Open page        (browser_navigate)
 2. Authenticate     (login flow)
 3. Navigate         (browser_click / browser_navigate)
@@ -40,7 +41,27 @@ browser_wait
 5. Validate result  (browser_snapshot / browser_evaluate)
 6. Check API response, console, and network errors
 7. Capture evidence (browser_take_screenshot)
+8. Stop the dev server (or leave it running explicitly — say which)
 ```
+
+## Start the Development Server First
+
+Blackbox tests run against a running app. Start it in development mode before
+opening the page:
+
+```text
+npm run dev              # Vite / Next.js / most package.json projects
+npm run serve            # or the project's serve / start script
+php artisan serve        # Laravel
+go run .                 # Go / Gin
+python manage.py runserver  # Django
+```
+
+Prefer the package.json `dev` script, then `serve`, then any equivalent start
+command. Wait for the URL / health endpoint to respond, and note the port.
+After tests, stop the dev server or leave it running explicitly — never leave
+it silently. The dev server is for blackbox testing only; never point browser
+tests at production by default.
 
 ## Guardrails
 

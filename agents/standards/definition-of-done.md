@@ -29,7 +29,7 @@ If it was not run, mark it "not run" — never "should pass".
 [ ] Unit tests passed
 [ ] Integration tests passed
 [ ] Regression tests passed
-[ ] Browser tests passed when applicable
+[ ] Blackbox / browser tests offered and run against the dev server when applicable
 [ ] Security implications reviewed
 [ ] Personal data implications reviewed
 [ ] Database migration reviewed

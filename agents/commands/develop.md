@@ -51,3 +51,8 @@ Tests
 Not every project requires every layer.
 
 Do not create empty architectural layers simply to satisfy this diagram.
+
+When implementation completes, do NOT report the task as done. Continue to
+`/check`, then `/test`. `/test` includes asking for development blackbox tests
+and starting the dev server (`npm run dev` / `npm run serve` / equivalent —
+see `commands/test.md`). "Done" only per `standards/definition-of-done.md`.

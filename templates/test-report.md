@@ -21,7 +21,8 @@ Type checking:
 Unit tests:
 Integration tests:
 Regression tests:
-Browser tests:
+Dev server (command + URL):
+Blackbox / browser tests:
 Security checks:
 ```
 
