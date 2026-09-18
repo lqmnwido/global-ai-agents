@@ -226,8 +226,23 @@ ${body}
   return routerPath;
 }
 
+function argvFromNpmConfig(argv) {
+  const out = [...argv];
+  const mcp = process.env.npm_config_mcp;
+  if (mcp !== undefined && mcp !== '') {
+    if (mcp === 'false') {
+      if (!out.includes('--no-mcp')) out.push('--no-mcp');
+    } else if (!out.some((a) => a.startsWith('--mcp='))) {
+      out.push(`--mcp=${mcp}`);
+    }
+  }
+  if ((process.env.npm_config_yes || '') === 'true' && !out.includes('--yes')) out.push('--yes');
+  if ((process.env.npm_config_all_mcp || '') === 'true' && !out.includes('--all-mcp')) out.push('--all-mcp');
+  return out;
+}
+
 async function main() {
-  const argv = process.argv.slice(2);
+  const argv = argvFromNpmConfig(process.argv.slice(2));
   const agents = index.getConfiguredAgents(argv);
   const targets = index.resolveTargetIds(argv);
 

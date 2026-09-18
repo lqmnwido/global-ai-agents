@@ -205,17 +205,26 @@ ai-agents --no-mcp                      # skip MCP setup at install
   browsers (Chrome family → `chrome-devtools`, Firefox → `firefox-dev-tools`,
   Safari/WebKit → Playwright `--browser=webkit`) and configures accordingly.
   Playwright MCP switches to `--browser=firefox` when Firefox is the primary browser.
-- During `npm install -g`, the harness checks which MCP servers are missing and
-  asks to install them (answering `y` installs everything available). npm hides
-  postinstall output by default, so use `--foreground-scripts` to see and
-  answer that prompt:
+- During `npm install -g`, the harness detects which MCP servers are missing and
+  **auto-installs the ones that need no credentials** for every selected agent,
+  skipping servers already configured and credential-gated servers (GitHub,
+  Sentry, Database) — those can be added later with `ai-agents-mcp` once their
+  environment variables exist.
+- Target a single agent with `--codex` (or `--claude`, `--cursor`,
+  `--windsurf`, `--opencode`, `--gemini`), and you can pass npm our flags
+  directly (`--no-mcp`, `--yes`). npm hides postinstall output by default, so
+  pass `--foreground-scripts` to see the summary:
 
   ```bash
-  npm install -g @lqmnwido/global-ai-agents@<version> --foreground-scripts
-  ```
+  # install for all agents (auto-configure no-credential MCP servers)
+  npm install -g @lqmnwido/global-ai-agents@<version>
 
-  Or skip the prompt and install missing servers non-interactively with
-  `ai-agents-mcp --all-mcp --yes`.
+  # install for Codex only
+  npm install -g @lqmnwido/global-ai-agents@<version> --codex
+
+  # skip MCP setup entirely
+  npm install -g @lqmnwido/global-ai-agents@<version> --no-mcp
+  ```
 - Servers needing credentials are **never auto-configured** — the installer prints
   the exact env var to set.
 - Configs are written to each agent (Codex `config.toml`, opencode `opencode.json`,
