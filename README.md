@@ -1,6 +1,6 @@
 # Global AI Agents
 
-Global AI Development Harness for **lqmnwido**.
+Global AI Development Harness Agents for **everyone**.
 
 Install via **npm** — one command configures **all major AI coding agents** at once.
 
@@ -33,21 +33,61 @@ Each agent's router is generated from a single template with paths rendered for 
 npm install -g @lqmnwido/global-ai-agents
 ```
 
-The postinstall script runs automatically and installs everything for all supported agents.
+The postinstall script runs automatically: it installs the modules for every
+supported agent and **auto-configures the MCP servers that need no credentials**
+(Playwright, Context7, the browser devtools server, Memory); already-configured
+and credential-gated servers are skipped.
+
+Target a single agent (or a set) by passing its flag directly through npm:
+
+```bash
+npm install -g @lqmnwido/global-ai-agents --codex            # Codex only
+npm install -g @lqmnwido/global-ai-agents --codex --claude   # Codex + Claude Code
+npm install -g @lqmnwido/global-ai-agents --opencode         # opencode only
+npm install -g @lqmnwido/global-ai-agents --no-mcp           # skip MCP setup
+```
+
+The flags are the same for every harness: `--codex --claude --cursor
+--windsurf --opencode --gemini --all`.
 
 Updating is the same command — never uninstall:
 
 ```bash
-npm update -g @lqmnwido/global-ai-agents
+npm install -g @lqmnwido/global-ai-agents@latest
 ```
 
-Every install/update refreshes all agents in place (managed files are always overwritten to the latest version).
+After publishing a new version, run `npm cache clean --force` first if npm
+reports `ETARGET` (its metadata cache lags the registry). Add
+`--foreground-scripts` to see the installer/MCP summary, since npm hides
+lifecycle output by default.
+
+Every install/update refreshes the targeted agents in place (managed files are
+always overwritten to the latest version; your unmanaged files are never touched).
 
 Or install per project:
 
 ```bash
 npm install -D @lqmnwido/global-ai-agents
 ```
+
+### Uninstalling
+
+Remove the harness files, **then** remove the npm package:
+
+```bash
+ai-agents-uninstall                     # all agents
+ai-agents-uninstall --codex             # Codex only (same flags as install)
+npm uninstall -g @lqmnwido/global-ai-agents
+```
+
+`ai-agents-uninstall` deletes only files the package owns (marked with
+`@lqmnwido/global-ai-agents`): the `agents/` module tree, routers (with a
+`.bak` copy), native slash commands and Codex `*-gag` skills. Run it **before**
+`npm uninstall -g`: the package's `preuninstall` cleanup does not always run
+(removal outside npm, a different nvm node, suppressed lifecycle scripts), which
+leaves the `.md` files behind. MCP registrations in agent configs
+(`[mcp_servers.*]`, etc.) are intentionally kept — remove them by hand if
+desired.
 
 ### CLI
 
@@ -70,8 +110,12 @@ anti-slop scanner passes over every module. Exit code 0 = healthy.
 ### Selecting specific agents
 
 ```bash
-GLOBAL_AGENTS_TARGETS=codex,claude ai-agents   # only Codex + Claude Code
+GLOBAL_AGENTS_TARGETS=codex,claude ai-agents     # only Codex + Claude Code
+ai-agents --codex --claude                        # same via CLI flags
 ```
+
+The `--codex --claude --cursor --windsurf --opencode --gemini --all` flags work
+on every `ai-agents` bin and can be passed straight through `npm install -g`. `--all` is the default.
 
 ### Testing with a scratch home
 
@@ -137,7 +181,7 @@ The harness registers the lifecycle as slash commands in every agent:
 | `/scope`     | Understand exactly what needs to change; approve the approach before work starts |
 | `/audit`     | Inspect the codebase and report findings before designing anything |
 | `/architect` | Present design options (economy / recommended / full) and approve one before any code |
-| `/develop`   | Implement only the approved plan, in approved stages |
+| `/develop`   | Implement only the approved plan, in approved stages; create components before the modules that consume them (bottom-up) |
 | `/check`     | Run the project's lint / type / format checks (`npm run lint`, `npm run typecheck`, ...) |
 | `/test`      | Run the test plan, including development blackbox tests (positive / negative / bug-error) |
 | `/debug`     | Reproduce the issue, hypothesize, and fix step by step — each step approved |
