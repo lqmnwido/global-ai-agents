@@ -40,3 +40,12 @@ Follow framework conventions.
 * Do not redesign the entire system to implement a small change.
 * Reuse existing components before creating new ones.
 * Do not create empty architectural layers to satisfy a diagram.
+
+## Build Order
+
+* Create systems bottom-up: the leaf components / building blocks first,
+  then the module or container that consumes them.
+* A module MUST NOT be created (or written) before its components exist.
+* Never write a module that references components that do not exist yet; a
+  module that imports missing components is not "created", it is incomplete by
+  construction.

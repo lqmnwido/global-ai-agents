@@ -16,6 +16,9 @@ During implementation:
 * Follow existing project conventions.
 * Avoid unrelated refactoring.
 * Keep changes minimal and focused.
+* Create components first, then the module or container that consumes them
+  (bottom-up dependency order).
+* Do not write a module that references components that do not exist yet.
 * Do not rename unrelated files.
 * Do not change public APIs unnecessarily.
 * Do not add dependencies unnecessarily.

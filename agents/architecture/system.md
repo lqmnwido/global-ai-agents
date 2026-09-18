@@ -67,3 +67,16 @@ frontend_patterns:
 ```
 
 Do not force a Laravel architecture onto a Spring Boot project or vice versa.
+
+## Build Order
+
+Create systems bottom-up, from the dependency root toward the container:
+
+```text
+Components / building blocks
+            ↓
+Module / container
+```
+
+A module MUST NOT be created before its components exist. Create the
+components first, then the module that assembles them.
