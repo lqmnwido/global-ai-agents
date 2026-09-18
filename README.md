@@ -205,8 +205,17 @@ ai-agents --no-mcp                      # skip MCP setup at install
   browsers (Chrome family → `chrome-devtools`, Firefox → `firefox-dev-tools`,
   Safari/WebKit → Playwright `--browser=webkit`) and configures accordingly.
   Playwright MCP switches to `--browser=firefox` when Firefox is the primary browser.
-- The three **recommended** servers (Playwright, Context7, and the
-  detected-browser devtools server) are offered during install.
+- During `npm install -g`, the harness checks which MCP servers are missing and
+  asks to install them (answering `y` installs everything available). npm hides
+  postinstall output by default, so use `--foreground-scripts` to see and
+  answer that prompt:
+
+  ```bash
+  npm install -g @lqmnwido/global-ai-agents@<version> --foreground-scripts
+  ```
+
+  Or skip the prompt and install missing servers non-interactively with
+  `ai-agents-mcp --all-mcp --yes`.
 - Servers needing credentials are **never auto-configured** — the installer prints
   the exact env var to set.
 - Configs are written to each agent (Codex `config.toml`, opencode `opencode.json`,

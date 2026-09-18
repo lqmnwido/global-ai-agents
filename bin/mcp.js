@@ -221,6 +221,73 @@ function printBrowsers() {
   console.log(`\n  Recommended devtools MCP: ${mcpById(devtools.id).name}\n  ${devtools.reason}\n`);
 }
 
+async function askYesNo(question) {
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  try {
+    const answer = await rl.question(question);
+    return /^y(es)?$/i.test(answer.trim());
+  } finally {
+    rl.close();
+  }
+}
+
+function interactiveOutputVisible() {
+  const npmFg = process.env.npm_config_foreground_scripts;
+  const foreground = npmFg === undefined || npmFg === 'true' || npmFg === true;
+  return Boolean(process.stdout.isTTY && process.stdin.isTTY && foreground && !process.env.CI);
+}
+
+function missingServerIds(agents) {
+  const ids = MCP_SERVERS.filter((s) => !s.secrets).map((s) => s.id);
+  return ids.filter((id) => !agents.some((a) => isMcpConfiguredFor(a, id)));
+}
+
+async function installMissingMcps(agents, argv) {
+  if (argv.includes('--no-mcp') || argv.includes('--no-playwright')) {
+    log('–', 'MCP setup skipped (--no-mcp)');
+    console.log('');
+    return;
+  }
+  if (argv.some((a) => a.startsWith('--mcp=')) || argv.includes('--all-mcp')) {
+    await setupMcps(agents, argv);
+    return;
+  }
+
+  const missing = missingServerIds(agents);
+  if (!missing.length) {
+    log('✓', 'all MCP servers already configured');
+    console.log('');
+    return;
+  }
+
+  const names = missing.map((id) => mcpById(id).name).join(', ');
+  log('i', `Not configured yet: ${names}`);
+
+  if (!interactiveOutputVisible()) {
+    if (argv.includes('--yes')) {
+      const summary = configureMcps(agents, MCP_SERVERS.map((s) => s.id), {});
+      printSummary(summary);
+    } else {
+      log('i', 'Run `ai-agents-mcp` in a terminal to install them, or reinstall with --foreground-scripts to be asked here.');
+    }
+    console.log('');
+    return;
+  }
+
+  const yes = await askYesNo(`  Install the missing MCP servers for all AI agents now?\n  Missing: ${names}\n  Reply with y/N: `);
+  if (!yes) {
+    log('–', 'skipped — run `ai-agents-mcp` any time to install them later');
+    console.log('');
+    return;
+  }
+
+  const summary = configureMcps(agents, MCP_SERVERS.map((s) => s.id), {});
+  printSummary(summary);
+  const devtools = chooseDevtoolsServer(detectBrowsers());
+  if (devtools.reason) console.log(`  ${devtools.reason}`);
+  console.log('  Tip: restart your AI agent so the new MCP servers are picked up.\n');
+}
+
 async function setupMcps(agents, argv) {
   if (argv.includes('--no-mcp') || argv.includes('--no-playwright')) {
     log('–', 'MCP setup skipped (--no-mcp)');
@@ -311,6 +378,9 @@ if (require.main === module) {
 
 module.exports = {
   setupMcps,
+  installMissingMcps,
+  missingServerIds,
+  interactiveOutputVisible,
   configureMcps,
   configureServerForAgent,
   isMcpConfiguredFor,

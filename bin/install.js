@@ -240,6 +240,7 @@ async function main() {
   console.log('  Multi-agent: Codex, Claude Code, Cursor, Windsurf, opencode, Gemini');
   console.log('  Flags:       --codex  --claude  --cursor  --windsurf  --opencode  --gemini  --all');
   console.log('               --mcp=id,id  --all-mcp  --no-mcp   (MCP server setup)');
+  console.log('               --yes                  (install missing MCP servers without prompting)');
   console.log('               --browsers   (show detected browsers + devtools choice)');
   console.log('  ───────────────────────────────────────────────────────────────────\n');
 
@@ -277,7 +278,7 @@ async function main() {
     if (argv.includes('--playwright') && !argv.some((a) => a.startsWith('--mcp=') || a === '--all-mcp')) {
       argv.push('--mcp=playwright');
     }
-    await mcp.setupMcps(agents, argv);
+    await mcp.installMissingMcps(agents, argv);
 
     console.log('  Done.\n');
   } catch (err) {
