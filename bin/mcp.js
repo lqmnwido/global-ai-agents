@@ -11,6 +11,20 @@ function log(icon, message) {
   console.log(`  ${icon} ${message}`);
 }
 
+function questionHidden(rl, query) {
+  return new Promise((resolve) => {
+    const out = rl.output;
+    const orig = rl._writeToOutput;
+    rl.write(`\n  ${query}`);
+    rl._writeToOutput = (s) => out.write(s.replace(/[^\r\n]/g, '*'));
+    rl.once('line', (line) => {
+      rl._writeToOutput = orig;
+      out.write('\n');
+      resolve(line.trim());
+    });
+  });
+}
+
 function configPathFor(agent) {
   const base = agent.baseDir();
   switch (agent.id) {
@@ -62,7 +76,8 @@ function resolveServer(server) {
       env[key] = value;
     }
   }
-  const args = (server.args || []).map((a) => a.replace(/\$\{([A-Z0-9_]+)\}/g, (_, k) => process.env[k] || ''));
+  const resolveToken = (k) => (k === 'CWD' ? process.cwd() : process.env[k] || '');
+  const args = (server.args || []).map((a) => a.replace(/\$\{([A-Z0-9_]+)\}/g, (_, k) => resolveToken(k)));
   return { env, args, missing };
 }
 
@@ -134,26 +149,53 @@ function isMcpConfiguredFor(agent, serverId) {
   }
 }
 
-function configureMcps(agents, serverIds, browserArgs) {
+async function configureMcps(agents, serverIds, browserArgs, opts = {}) {
   const summary = [];
   const overrides = browserArgs || {};
+  const interactive = opts.askSecrets !== false && !!process.stdin.isTTY && !!process.stdout.isTTY;
   for (const id of serverIds) {
     const server = mcpById(id);
     if (!server) continue;
+    const remaining = agents.filter((a) => !isMcpConfiguredFor(a, server.id));
+    if (!remaining.length) {
+      summary.push({ server, agentsDone: [], agentsSkipped: [], missing: [] });
+      continue;
+    }
+
+    const required = server.requiredEnv || [];
+    let missing = required.filter((key) => !process.env[key]);
+    let secretsStored = false;
+
+    if (missing.length && interactive) {
+      const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+      try {
+        for (const key of missing) {
+          const value = await questionHidden(rl, `${server.name} MCP needs ${key} — enter value (Enter to skip): `);
+          if (value) {
+            process.env[key] = value;
+            secretsStored = true;
+          }
+        }
+      } finally {
+        rl.close();
+      }
+      missing = required.filter((key) => !process.env[key]);
+    }
+
     const agentsDone = [];
     const agentsSkipped = [];
-    let missing = [];
-    for (const agent of agents) {
-      if (isMcpConfiguredFor(agent, server.id)) {
-        continue;
-      }
+    for (const agent of remaining) {
       const result = configureServerForAgent(agent, server, overrides[id]);
       if (result.skipped) {
         agentsSkipped.push(agent.name);
-        missing = result.missing;
-      } else {
+      } else if (result.changed) {
         agentsDone.push(agent.name);
       }
+    }
+    if (secretsStored && agentsDone.length) {
+      const label = server.secrets ? 'credentials' : 'config value';
+      log('', `  🔑 ${server.name} ${label} stored in agent MCP config (plaintext).`);
+      log('!', 'Keep that config file out of git — prefer env vars for CI/shared machines.');
     }
     summary.push({ server, agentsDone, agentsSkipped, missing });
   }
@@ -169,7 +211,7 @@ function printSummary(summary) {
       log('→', `${server.name} MCP already configured`);
     }
     if (agentsSkipped.length) {
-      log('!', `${server.name} needs ${missing.join(', ')} — export it and run: ai-agents-mcp --mcp=${server.id}`);
+      log('!', `${server.name} needs ${missing.join(', ')} — run ai-agents-mcp interactively, or export it and run: ai-agents-mcp --mcp=${server.id}`);
       if (server.note) log(' ', server.note);
     }
   }
@@ -237,7 +279,12 @@ async function installMissingMcps(agents, argv) {
   const extra = playwrightArgsFor(browsers);
   if (extra.length) browserArgs.playwright = extra;
 
-  const summary = configureMcps(agents, MCP_SERVERS.map((s) => s.id), browserArgs);
+  const summary = await configureMcps(
+    agents,
+    MCP_SERVERS.map((s) => s.id),
+    browserArgs,
+    { askSecrets: !argv.includes('--no-ask') },
+  );
   printSummary(summary);
 
   const devtools = chooseDevtoolsServer(browsers);
@@ -287,7 +334,12 @@ async function setupMcps(agents, argv) {
     if (extra.length) browserArgs.playwright = extra;
   }
 
-  const summary = configureMcps(agents, selection, browserArgs);
+  const summary = await configureMcps(
+    agents,
+    selection,
+    browserArgs,
+    { askSecrets: !argv.includes('--no-ask') },
+  );
   printSummary(summary);
   if (devtools.reason) console.log(`  ${devtools.reason}`);
   console.log('  Tip: restart your AI agent so the new MCP servers are picked up.\n');

@@ -24,6 +24,13 @@ Configured during `ai-agents` install too (recommended set, with a prompt).
 | `chrome-devtools` | Console, network, DOM, performance traces (Lighthouse/CWV) | none | Chrome-family | yes |
 | `firefox-dev-tools` | Firefox DevTools via WebDriver BiDi (official Mozilla server) | none | Firefox | (auto) |
 | `memory` | Persistent cross-session knowledge graph | optional `MEMORY_FILE_PATH` | — | no |
+| `fetch` | Fetch a URL over HTTP and convert it to markdown | none | — | no |
+| `duckduckgo` | Web search + page scrape with no API key | none | — | no |
+| `git` | Local git history, diffs and repo state | none | — | no |
+| `filesystem` | Read/write sandboxed to the setup working dir | none | — | no |
+| `sqlite` | Query a local SQLite database | `SQLITE_PATH` (file path) | — | no |
+| `sequential-thinking` | Structured multi-step reasoning | none | — | no |
+| `time` | Timezone-aware time and conversions | none | — | no |
 | `github` | Issues, PRs, code search, Actions | `GITHUB_PERSONAL_ACCESS_TOKEN` | — | no |
 | `sentry` | Production errors and stack traces | `SENTRY_ACCESS_TOKEN` | — | no |
 | `database` | Read-only schema/query inspection (PostgreSQL) | `DATABASE_URL` | — | no |
@@ -55,6 +62,10 @@ exporting it.
 - **context7** is the single biggest anti-slop win: it lets agents verify real
   library APIs instead of inventing signatures (`standards/anti-slop.md`).
 - **chrome-devtools + playwright** cover testing and debugging end to end.
+- **fetch / duckduckgo / git / sequential-thinking / time** are zero-setup tools
+  that need no credentials — the harness stays useful even fully offline-first.
+- **filesystem** is sandboxed to the directory where setup ran (`${CWD}`), so it
+  follows least privilege instead of granting whole-disk access.
 - **github / sentry / database** connect the harness to real project state
   (read-only by default), which keeps `/audit` and `/debug` honest.
 
@@ -68,8 +79,8 @@ exporting it.
 
 ## Launch Model
 
-All servers run via `npx -y` (no global install required). The relevant package
-is fetched on first use. Playwright browsers still need:
+All servers run via `npx -y` — the package is fetched by npm on first use, no
+global install or extra toolchain needed. Playwright browsers still need:
 
 ```bash
 npx playwright install
