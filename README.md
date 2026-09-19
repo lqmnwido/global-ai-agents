@@ -6,7 +6,7 @@ Install via **npm** — one command configures **all major AI coding agents** at
 
 ## What It Does
 
-- Installs **112 modular `.md` skill files** (one concept per file) into the global config directory of every supported AI agent, plus **5 templates**.
+- Installs **112 modular `.md` skill files** (one concept per file) into the global config directory of every supported AI agent, plus **6 templates**.
 - The root `AGENTS.md` is a **router**: it only references modules. Each rule/standard/command lives in its own file.
 - Supports **all popular languages and frameworks** (Laravel, Spring Boot, Django, Rails, ASP.NET Core, Go, Rust, Kotlin, FastAPI, Next.js, NestJS, React, Vue, Angular, Flutter, and 25+ more).
 - Supports **every major AI coding agent** through the same shared modules.
@@ -142,7 +142,7 @@ GLOBAL_AGENTS_HOME=/tmp/fake-home ai-agents
 ├── frontend/         # 6 frontend skills
 ├── quality/          # 7 quality skills (testing, browser-testing, refactoring, performance, ...)
 ├── operations/       # 5 operations skills (git, deployment, incident-response, ...)
-└── templates/        # 5 templates (report, ADR + verification)
+└── templates/        # 6 templates (feature-plan, test-report, ADR, verification, project-harness)
 ```
 
 Every agent also gets the lifecycle commands as **native slash commands**,
