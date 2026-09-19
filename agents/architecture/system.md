@@ -29,7 +29,7 @@ Framework-specific rules should extend the company standard.
 Example:
 
 ```text
-.ai/profiles/
+.doc/profiles/
 
 laravel-vue.md
 spring-vue.md

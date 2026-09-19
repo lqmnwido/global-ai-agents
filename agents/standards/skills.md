@@ -11,7 +11,7 @@ A Skill defines **how work should be performed**.
 ## Example Structure
 
 ```text
-.ai/
+.doc/
 ├── skills/
 │   ├── architecture/
 │   │   ├── laravel.md

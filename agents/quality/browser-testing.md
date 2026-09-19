@@ -8,6 +8,29 @@
 - Blackbox testing validates behavior through the browser UI without relying on internal implementation details.
 - Uses **Playwright MCP** (`@playwright/mcp`) — a browser automation MCP server — when configured for the agent.
 
+## Mandatory Tooling Rule
+
+Browser / UI validation MUST use the Playwright MCP browser tools already
+configured in the agent's toolset (e.g. `browser_navigate`, `browser_snapshot`,
+`browser_click`, `browser_type`, `browser_evaluate`, `browser_take_screenshot`).
+
+```text
+1. Look for an MCP browser tool (Playwright) in the current toolset.
+2. If present  → use it. Do NOT ask to install anything.
+3. If absent   → follow "If Playwright MCP Is Not Configured" below (ask once).
+```
+
+- Do NOT substitute a bundled/plugin-cache browser skill (for example a
+  `computer-use` SKILL.md) for Playwright MCP. Those are not the approved tool
+  and MUST NOT be used for blackbox testing.
+- Do NOT add Playwright to the project as an npm dependency and do NOT run
+  `npx playwright install` to perform blackbox testing. Playwright here is a
+  **global MCP server** configured by the harness, not a project library.
+  Installing `@playwright/test` and browser binaries into the repo is the wrong
+  layer and causes repeated, unnecessary setup prompts.
+- The browser MCP is a tool the agent already has, or that the harness installs
+  once. Never re-ask the user on every `/test` run.
+
 ## When to Use
 
 - `/test` requires browser / E2E validation.
@@ -93,6 +116,12 @@ tests at production by default.
 
 ## If Playwright MCP Is Not Configured
 
-- Ask the user: *"Should we install and configure Playwright MCP for blackbox testing?"*
+First confirm it is actually missing: check the current toolset for Playwright
+browser tools before concluding it is unavailable. Only then:
+
+- Ask the user **once**: *"Should we install and configure Playwright MCP for blackbox testing?"*
 - If the user declines, skip browser / blackbox tests and note the gap in the test report.
-- If approved, run `ai-agents-playwright` (or `ai-agents --playwright`) after installation is complete.
+- If approved, configure the **global MCP server** (not a project dependency)
+  and then run `ai-agents-playwright` (or `ai-agents --playwright`). Restart the
+  agent so the new MCP server is picked up.
+- Do not ask again on later runs once it is configured.

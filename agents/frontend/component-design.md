@@ -8,7 +8,12 @@
 
 ## Rules
 
-- Reuse existing components before creating new ones; search the codebase and the design system library first.
+- Component creation cycle MUST start with a reuse check: search the codebase
+  and the design system library for an existing component that covers the need
+  (or can be extended) before creating anything new.
+- If an existing component matches, reuse or extend it. Only create a new
+  component when no existing one fits; a new module does NOT justify duplicating
+  an existing component.
 - Do not create visually inconsistent components when a design system exists; always extend or wrap existing primitives.
 - One component per file; keep the filename matching the exported component name exactly.
 - Prefer composition over inheritance; break large components into smaller, focused children.
@@ -18,6 +23,9 @@
 
 ## Guidelines
 
+- Before building a component, record what you found: `searched_for` (what was
+  looked up) and `reused` (the component(s) chosen). If nothing fits, state why
+  before creating a new one.
 - Use slot patterns or render props for layout extension points rather than passing deeply nested config objects.
 - Expose a minimal public API surface; internal helper components should not be exported.
 - Co-locate related files: component, styles, tests, and types in the same directory.
@@ -44,6 +52,8 @@ export function UserCard({ user, onSelect }: UserCardProps) {
 
 ## Anti-patterns
 
+- Do not create a new component (e.g. a table) per module/page when one
+  reusable component already serves the same need; this is duplication.
 - Do not duplicate reusable logic across pages; extract it into a shared hook or utility.
 - Do not pass more than 5-6 props to a single component; split it into sub-components.
 - Do not use prop drilling deeper than two levels; use context or composition instead.

@@ -16,6 +16,10 @@ During implementation:
 * Follow existing project conventions.
 * Avoid unrelated refactoring.
 * Keep changes minimal and focused.
+* Check for an existing reusable component BEFORE creating a new one. When a
+  new module needs a component (e.g. a table), search the codebase and the
+  design system library first; if a component already covers the need, reuse or
+  extend it. Do not create a duplicate.
 * Create components first, then the module or container that consumes them
   (bottom-up dependency order).
 * Do not write a module that references components that do not exist yet.
@@ -43,6 +47,8 @@ Service / Application Layer
 Controller / API
    ↓
 Frontend State
+   ↓
+Component Reuse Check (search existing components before creating new ones)
    ↓
 Frontend Components
    ↓

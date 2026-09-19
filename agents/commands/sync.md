@@ -24,6 +24,18 @@ Migration reviewed
 Git diff reviewed
 ```
 
+## Harness Refresh
+
+Before syncing, check whether `.doc/agents.md` is stale:
+
+- Compare the module list in `.doc/agents.md` against the global harness
+  inventory and against any new reusable components added this cycle.
+- If the harness changed, the stack changed, or a component was added, propose
+  the manifest update and refresh `.doc/agents.md`.
+- Reference module paths only; never paste global rule bodies into `.doc/agents.md`.
+- Use relative module names so every harness resolves them against its own
+  module directory.
+
 ## Standard Git Flow
 
 Example:

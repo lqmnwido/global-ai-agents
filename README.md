@@ -294,7 +294,7 @@ ai-agents-slop --strict     # fail on warnings too
 
 Flags TODO stubs, placeholder text, empty catches, `any`, debug output,
 commented-out code, hardcoded secrets/localhost URLs, and slop prose phrases.
-Configure via `.ai/slopignore` and `.ai/slop.json`.
+Configure via `.doc/slopignore` and `.doc/slop.json`.
 
 - `standards/data-privacy.md` (PDPA/GDPR) and `standards/agent-security.md`
   (prompt-injection / untrusted-input defense) close the remaining gaps.

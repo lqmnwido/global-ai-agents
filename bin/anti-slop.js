@@ -133,21 +133,27 @@ function areaForFile(file) {
 
 function loadConfig() {
   const cfg = { ignore: [], disable: new Set() };
-  const ignoreFile = path.join('.ai', 'slopignore');
-  if (fs.existsSync(ignoreFile)) {
-    for (const line of fs.readFileSync(ignoreFile, 'utf8').split(/\r?\n/)) {
-      const v = line.trim();
-      if (v && !v.startsWith('#')) cfg.ignore.push(v);
+  for (const dir of ['.doc', '.ai']) {
+    const ignoreFile = path.join(dir, 'slopignore');
+    if (fs.existsSync(ignoreFile)) {
+      for (const line of fs.readFileSync(ignoreFile, 'utf8').split(/\r?\n/)) {
+        const v = line.trim();
+        if (v && !v.startsWith('#')) cfg.ignore.push(v);
+      }
+      break;
     }
   }
-  const jsonFile = path.join('.ai', 'slop.json');
-  if (fs.existsSync(jsonFile)) {
-    try {
-      const parsed = JSON.parse(fs.readFileSync(jsonFile, 'utf8'));
-      if (Array.isArray(parsed.ignore)) cfg.ignore.push(...parsed.ignore);
-      if (Array.isArray(parsed.disable)) parsed.disable.forEach((d) => cfg.disable.add(d));
-    } catch {
-      /* ignore malformed config */
+  for (const dir of ['.doc', '.ai']) {
+    const jsonFile = path.join(dir, 'slop.json');
+    if (fs.existsSync(jsonFile)) {
+      try {
+        const parsed = JSON.parse(fs.readFileSync(jsonFile, 'utf8'));
+        if (Array.isArray(parsed.ignore)) cfg.ignore.push(...parsed.ignore);
+        if (Array.isArray(parsed.disable)) parsed.disable.forEach((d) => cfg.disable.add(d));
+      } catch {
+        /* ignore malformed config */
+      }
+      break;
     }
   }
   return cfg;
@@ -266,7 +272,7 @@ function printHelp() {
   console.log('    ai-agents-slop <paths...>       scan files/directories');
   console.log('    ai-agents-slop --staged --json  machine-readable output');
   console.log('    ai-agents-slop --strict         fail on warnings too\n');
-  console.log('  Config: .ai/slopignore (path patterns), .ai/slop.json ({ ignore: [], disable: [] })\n');
+  console.log('  Config: .doc/slopignore (path patterns), .doc/slop.json ({ ignore: [], disable: [] })\n');
 }
 
 function main() {

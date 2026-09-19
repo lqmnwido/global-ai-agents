@@ -117,7 +117,17 @@ The user declines only if they choose to — the agent never omits the offer.
 
 ## Browser Testing
 
-Browser automation may use an approved Browser MCP.
+Browser automation MUST use the approved Playwright MCP browser tools
+(`quality/browser-testing.md`).
+
+- Use the Playwright browser MCP tools already in the toolset; if they are
+  present, run them without asking to install anything.
+- Do NOT use a bundled/plugin-cache browser skill (such as `computer-use`) as a
+  substitute.
+- Do NOT add Playwright to the project (`npm install @playwright/test`) or run
+  `npx playwright install` to perform blackbox testing — Playwright is a global
+  MCP server, not a project dependency. Ask once, only if it is genuinely
+  unconfigured.
 
 Typical validation:
 

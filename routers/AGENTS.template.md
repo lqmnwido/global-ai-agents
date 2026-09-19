@@ -20,6 +20,8 @@ decision, exactly as if the content were inline.
 The agent MUST process this unless the request is trivial.
 
 ```text
+0.  If `.doc/agents.md` exists, read it and load ONLY the modules it lists for
+    this project (project manifest); otherwise continue with the load order below.
 1.  Read AGENTS.md (this file)
 2.  Read {{MOD}}INDEX.md                           # full file inventory
 3.  Read {{MOD}}standards/core.md                  # core engineering principles
@@ -263,7 +265,7 @@ Mandatory reading for all development. Not optional.
 
 ## G. Configuration
 
-Project-level configuration lives in `.ai/config.yaml`.
+Project-level configuration lives in `.doc/config.yaml`.
 
 Global harness config lives at `{{MOD}}config.yaml`.
 

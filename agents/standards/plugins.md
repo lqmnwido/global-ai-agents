@@ -19,7 +19,7 @@ Configuration
 ## Recommended Structure
 
 ```text
-.ai/
+.doc/
 └── plugins/
     ├── laravel/
     │   ├── manifest.yaml

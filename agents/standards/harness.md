@@ -94,7 +94,7 @@ project/
 │
 ├── CHANGELOG.md
 │
-├── .ai/
+├── .doc/
 │   │
 │   ├── config.yaml
 │   │
@@ -183,7 +183,7 @@ Prefer versioned shared standards.
 
 ## Configuration
 
-Example `.ai/config.yaml`:
+Example `.doc/config.yaml`:
 
 ```yaml
 company: lqmnwido
