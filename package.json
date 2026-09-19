@@ -1,6 +1,6 @@
 {
   "name": "@lqmnwido/global-ai-agents",
-  "version": "1.4.7",
+  "version": "1.4.8",
   "description": "Global AI development harness agents for everyone. One npm install, works with Codex, Claude Code, Cursor, Windsurf, opencode, Gemini CLI. Covers Laravel, Spring Boot, Django, Rails, ASP.NET, Go, Rust and 25+ more frameworks.",
   "main": "index.js",
   "bin": {
